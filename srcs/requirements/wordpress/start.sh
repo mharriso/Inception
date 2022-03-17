@@ -1,8 +1,10 @@
 #!/bin/bash
-sed -i 's/bind-ad/#bind-ad/g' /etc/mysql/mariadb.conf.d/50-server.cnf
-
+sed -i 's/\/run\/php\/php7.3-fpm.sock/wordpress:9000/g' etc/php/7.3/fpm/pool.d/www.conf
+mkdir -p /run/php
+chown -R www-data:www-data /var/www/*
+chmod -R 755 /var/www/*
 if [ ! -f /var/www/html/wp-config.php ]; then
-	mkdir -p /var/www/html/
+	mkdir -p /var/www/html
 	cd /var/www/html
 	wp core download --allow-root
 	wp core config	--allow-root \
@@ -19,5 +21,6 @@ if [ ! -f /var/www/html/wp-config.php ]; then
 					--admin_email="$WP_ADMIN_EMAIL"
 	wp user create --allow-root "$WP_USER" "$WP_USER_EMAIL" --user_pass="$WP_USER_PASS"
 fi
+
 
 /usr/sbin/php-fpm7.3 --nodaemonize
